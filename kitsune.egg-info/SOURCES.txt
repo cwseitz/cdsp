@@ -1,0 +1,6 @@
+kitsune.c
+setup.py
+kitsune.egg-info/PKG-INFO
+kitsune.egg-info/SOURCES.txt
+kitsune.egg-info/dependency_links.txt
+kitsune.egg-info/top_level.txt
