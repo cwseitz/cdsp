@@ -1,6 +1,8 @@
 #include    <math.h>
 #include    <stdlib.h>
 #include    <stdio.h>
+#include    <Python.h>
+#include    <numpy/arrayobject.h>
 #include    "dft.h"
 
 /**********************************************************************
@@ -24,7 +26,7 @@ log2    Base 2 logarithm
 /***********************************************************************
 
 dft - Discrete Fourier Transform
-  
+
 This function performs a straight DFT of N points on an array of
 complex numbers whose first member is pointed to by Datain.  The
 output is placed in an array pointed to by Dataout.
@@ -33,7 +35,41 @@ void dft(COMPLEX *Datain, COMPLEX *Dataout, int N)
 
 *************************************************************************/
 
-void dft(Datain, Dataout, N)
+static PyObject* dft(PyObject* Py_UNUSED(self), PyObject* args) {
+
+  PyObject* list;
+
+  if (!PyArg_ParseTuple(args, "O!", &PyList_Type, &list))
+    return NULL;
+
+    PyListObject ls = PyList_GetItem(list, 0); //Input Signal
+    int N = PyFloat_AsDouble(PyList_GetItem(list, 1)); //FFT Size
+    int size = PyList_Size(ls);
+    int i;
+
+    for (i = 1; i < size; i++){
+            tptr[i] = tptr[i-1] + dt;
+            PyList_GetItem()
+            sptr[i] = sin(tptr[i]);
+    }
+
+    //duplicate for python (inefficient)
+    PyObject *tlist = PyList_New(n);
+    PyObject *slist = PyList_New(n);
+
+    for (int i = 0; i < n; ++i) {
+       PyList_SET_ITEM(tlist, i, PyFloat_FromDouble(tptr[i]));
+       PyList_SET_ITEM(slist, i, PyFloat_FromDouble(sptr[i]));
+    }
+
+
+    free(sptr);
+    free(tptr);
+
+    return Py_BuildValue("(OO)",tlist,slist);
+}
+
+void _dft(Datain, Dataout, N)
     COMPLEX *Datain, *Dataout;
     int N;
 {
@@ -91,7 +127,7 @@ void dft(Datain, Dataout, N)
 /***********************************************************************
 
 idft - Inverse Discrete Fourier Transform
-  
+
 This function performs an inverse DFT of N points on an array of
 complex numbers whose first member is pointed to by Datain.  The
 output is placed in an array pointed to by Dataout.
@@ -250,7 +286,7 @@ void fft(x,m)
                 temp.real = xi->real + xip->real;
                 temp.imag = xi->imag + xip->imag;
                 tm.real = xi->real - xip->real;
-                tm.imag = xi->imag - xip->imag;             
+                tm.imag = xi->imag - xip->imag;
                 xip->real = tm.real*u.real - tm.imag*u.imag;
                 xip->imag = tm.real*u.imag + tm.imag*u.real;
                 *xi = temp;
@@ -258,7 +294,7 @@ void fft(x,m)
             wptr = wptr + windex;
         }
         windex = 2*windex;
-    }            
+    }
 
 /* rearrange data by bit reversing */
 
@@ -375,7 +411,7 @@ void ifft(x,m)
                 temp.real = xi->real + xip->real;
                 temp.imag = xi->imag + xip->imag;
                 tm.real = xi->real - xip->real;
-                tm.imag = xi->imag - xip->imag;             
+                tm.imag = xi->imag - xip->imag;
                 xip->real = tm.real*u.real - tm.imag*u.imag;
                 xip->imag = tm.real*u.imag + tm.imag*u.real;
                 *xi = temp;
@@ -383,7 +419,7 @@ void ifft(x,m)
             wptr = wptr + windex;
         }
         windex = 2*windex;
-    }            
+    }
 
 /* rearrange data by bit reversing */
 
@@ -420,7 +456,7 @@ rfft - trig recombination real input FFT
 Requires real array pointed to by x, pointer to complex
 output array, y and the size of real FFT in power of
 2 notation, m (size of input array and FFT, N = 2**m).
-On completion, the COMPLEX array pointed to by y 
+On completion, the COMPLEX array pointed to by y
 contains the lower N/2 + 1 elements of the spectrum.
 
 void rfft(float *x, COMPLEX *y, int m)
@@ -464,7 +500,7 @@ void rfft(x,y,m)
         cf[k-1].real = (float)cos(arg);
         cf[k-1].imag = (float)sin(arg);
       }
-    }  
+    }
 
 /* DC component, no multiplies */
     y[0].real = cx[0].real + cx[0].imag;

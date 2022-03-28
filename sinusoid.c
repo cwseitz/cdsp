@@ -2,7 +2,6 @@
 #include <numpy/arrayobject.h>
 #include <stdio.h>
 
-
 static PyObject* sinusoid(PyObject* Py_UNUSED(self), PyObject* args) {
 
   PyObject* list;
@@ -31,8 +30,8 @@ static PyObject* sinusoid(PyObject* Py_UNUSED(self), PyObject* args) {
        PyList_SET_ITEM(tlist, i, PyFloat_FromDouble(tptr[i]));
        PyList_SET_ITEM(slist, i, PyFloat_FromDouble(sptr[i]));
     }
-    
-    
+
+
     free(sptr);
     free(tptr);
 
